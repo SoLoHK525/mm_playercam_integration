@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MM Player Cam Adjustment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.2/vue.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+    <style>
+        * {
+            font-family: 'Microsoft JhengHei', sans-serif !important;
+        }
+    </style>
+    <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<div id="app">
+    <div class="container mx-auto">
+        <div id="list-1">
+            <div v-for="(player, i) in players" :key="player.steamid" :id="player.steamid" class="m-1">
+                <player-card :player="player"></player-card>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<script type="application/javascript">
+    const players = []
+
+    const playerCard = {
+        template: `
+          <div class="bg-slate-500 px-4 py-1 flex">
+          <div class="mr-4">
+            <div class="text-xs font-bold text-white">{{ player.cam }}</div>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-white name">{{ player.name }}</div>
+            <div class="text-xs font-bold text-white">{{ player.steamid }}</div>
+          </div>
+          </div>`,
+        props: ['player'],
+        data: () => ({item: 'test'}),
+    }
+
+    const {createApp, ref} = Vue
+
+    new Vue({
+        data() {
+            return {
+                players: players,
+                drag: false,
+            }
+        },
+        methods: {
+            onListChange(evt) {
+
+
+                const players = [...evt.target.children].map((element, index) => ({
+                    name: element.getElementsByClassName('name')[0].innerText,
+                    steamid: element.id,
+                    cam: index,
+                }));
+
+                this.players = players;
+                this.$forceUpdate();
+
+                fetch("/mapping", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(players),
+                }).then((response) => {
+                    console.log(response);
+                });
+            }
+        },
+        mounted() {
+            fetch("/mapping").then(async (response) => {
+                const players = await response.json();
+                if (players && players.length > 0) {
+                    this.players = players.sort((a, b) => {
+                        return a.cam - b.cam;
+                    });
+                }
+            })
+
+            console.log('mounted');
+            const list1 = document.getElementById('list-1');
+            console.log(list1);
+            const sortable = window.Sortable.create(list1, {
+                animation: 100,
+                onEnd: this.onListChange,
+            });
+        },
+        components: {
+            playerCard,
+            draggable: window['vuedraggable'],
+        }
+    }).$mount("#app");
+</script>
+</body>
+</html>
