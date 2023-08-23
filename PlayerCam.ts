@@ -14,6 +14,7 @@ export const handleCamChange = (_player: Player | null = null) => {
   if (!_player) {
     // hide cam
     console.log("Cam changed to null");
+    changeCam(-1);
     return;
   }
 
@@ -27,6 +28,7 @@ export const handleCamChange = (_player: Player | null = null) => {
     return;
   }
 
+  changeCam(playerIdToCamMap.get(player.steamid) ?? -1);
   console.log(`Cam changed to ${player.name}: ${playerIdToCamMap.get(player.steamid)}}`);
 }
 
