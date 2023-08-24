@@ -54,7 +54,9 @@ export function changeCam(index: number) {
     return;
   }
 
-  request.get(`/press/bank/3/${index}`)
+  const cam = index == 0 ? 10 : index;
+
+  request.get(`/press/bank/3/${cam}`)
     .then(() => {
       request.get(`/press/bank/1/18`).catch(err => {
         console.log(`Error when trying to toggle on cam: ${err}`);
