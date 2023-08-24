@@ -1,6 +1,7 @@
 import express from "express";
 import {onGameState} from "./GameStateIntegration";
 import {playerIdToCamMap, players} from "./PlayerCam";
+import { readFile, writeFile } from "fs/promises";
 
 
 const app = express();
@@ -10,7 +11,12 @@ const PORT = 3005;
 app.use(express.static('public'))
 
 app.get("/mapping", (req, res) => {
+  const arr = getPlayerCamMapping();
 
+  res.json(arr).status(200);
+});
+
+function getPlayerCamMapping() {
   const arr = [...playerIdToCamMap.entries()].map(([steamid, cam]) => (
     {
       name: players.get(steamid)?.name,
@@ -18,8 +24,9 @@ app.get("/mapping", (req, res) => {
       cam
     }
   ));
-  res.json(arr).status(200);
-});
+
+  return arr;
+}
 
 app.post("/mapping", (req, res) => {
   res.writeHead(200, {'Content-Type': 'text/html'});
@@ -49,6 +56,25 @@ function handleMappingUpdate(payload: {
   console.log("Updating mapping");
   payload.forEach(({steamid, cam}) => {
     playerIdToCamMap.set(steamid, cam);
+  });
+
+  saveMapping();
+}
+
+function loadMapping() {
+  console.log("Loading mapping");
+  readFile('mapping.json', 'utf8').then((data) => {
+    const arr = JSON.parse(data);
+    handleMappingUpdate(arr);
+  });
+}
+
+function saveMapping() {
+  const arr = [...playerIdToCamMap.entries()];
+  const json = JSON.stringify(arr);
+
+  writeFile('mapping.json', json, 'utf8').then(() => {
+    console.log("Mapping saved");
   });
 }
 
