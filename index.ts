@@ -66,6 +66,8 @@ function loadMapping() {
   readFile('mapping.json', 'utf8').then((data) => {
     const arr = JSON.parse(data);
     handleMappingUpdate(arr);
+  }).catch(err => {
+    console.log(`Error when trying to load mapping: ${err}`);
   });
 }
 
