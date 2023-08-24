@@ -4,6 +4,7 @@ import config from "./config";
 
 const request = axios.create({
   baseURL: config.cam_endpoint,
+  timeout: 1000
 })
 
 interface BasicPlayer {
@@ -53,7 +54,7 @@ export function changeCam(index: number) {
     return;
   }
 
-  request.get(`/press/bank/3/${index + 1}`)
+  request.get(`/press/bank/3/${index}`)
     .then(() => {
       request.get(`/press/bank/1/18`).catch(err => {
         console.log(`Error when trying to toggle on cam: ${err}`);
