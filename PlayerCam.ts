@@ -48,7 +48,7 @@ function transformPlayerToBasicPlayer(player: Player): BasicPlayer {
 
 export function changeCam(index: number) {
   if (index < 0) {
-    request.get(`/press/bank/1/17`).catch(err => {
+    request.get(`/press/bank/1/18`).catch(err => {
       console.log(`Error when trying to toggle off cam: ${err}`);
     });
     return;
@@ -58,7 +58,7 @@ export function changeCam(index: number) {
 
   request.get(`/press/bank/3/${cam}`)
     .then(() => {
-      request.get(`/press/bank/1/18`).catch(err => {
+      request.get(`/press/bank/1/17`).catch(err => {
         console.log(`Error when trying to toggle on cam: ${err}`);
       });
     }).catch(err => {
