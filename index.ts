@@ -70,7 +70,7 @@ function loadMapping() {
 }
 
 function saveMapping() {
-  const arr = [...playerIdToCamMap.entries()];
+  const arr = getPlayerCamMapping();
   const json = JSON.stringify(arr);
 
   writeFile('mapping.json', json, 'utf8').then(() => {
@@ -101,4 +101,5 @@ app.post("/api/gsi", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`HTTP Server listening on port ${PORT}`);
+  loadMapping();
 });
