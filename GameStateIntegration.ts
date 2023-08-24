@@ -1,5 +1,6 @@
 import {GameState, Player} from "csgo-gsi-types";
 import {handleCamChange, playerIdToCamMap, players as camPlayers} from "./PlayerCam";
+import {loadMapping} from "./index";
 
 let previousGameState: GameState | null = null;
 
@@ -36,6 +37,8 @@ function hydratePlayerSlotToCamMap(gameState: GameState) {
   console.log("Hydrated playerSlotToCamMap");
 
   hydrated = true;
+
+  loadMapping();
 }
 
 function spectatingPlayerHandler(gameState: GameState) {

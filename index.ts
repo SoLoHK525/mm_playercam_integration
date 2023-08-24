@@ -61,7 +61,7 @@ function handleMappingUpdate(payload: {
   saveMapping();
 }
 
-function loadMapping() {
+export function loadMapping() {
   console.log("Loading mapping");
   readFile('mapping.json', 'utf8').then((data) => {
     const arr = JSON.parse(data);
@@ -103,5 +103,4 @@ app.post("/api/gsi", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`HTTP Server listening on port ${PORT}`);
-  loadMapping();
 });
