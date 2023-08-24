@@ -1,5 +1,10 @@
 import {Player} from "csgo-gsi-types";
+import axios from "axios";
+import config from "./config";
 
+const request = axios.create({
+  baseURL: config.cam_endpoint,
+})
 
 interface BasicPlayer {
   steamid: string;
@@ -41,5 +46,19 @@ function transformPlayerToBasicPlayer(player: Player): BasicPlayer {
 }
 
 export function changeCam(index: number) {
+  if (index < 0) {
+    request.get(`/press/bank/1/17`).catch(err => {
+      console.log(`Error when trying to toggle off cam: ${err}`);
+    });
+    return;
+  }
 
+  request.get(`/press/bank/3/${index + 1}`)
+    .then(() => {
+      request.get(`/press/bank/1/18`).catch(err => {
+        console.log(`Error when trying to toggle on cam: ${err}`);
+      });
+    }).catch(err => {
+    console.log(`Error when trying to change cam: ${err}`);
+  })
 }
